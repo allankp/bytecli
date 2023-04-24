@@ -33,6 +33,7 @@ def get_account_info(attribute: str):
 
 @app.command()
 def servername() -> None:
+    """Name of serverd"""
     console.print(
         f'[magenta]Server name:[/magenta] [green]{get_account_info("server_name")}[/green]'
     )
@@ -40,6 +41,7 @@ def servername() -> None:
 
 @app.command()
 def diskquota() -> None:
+    """Disk usage quota"""
     console.print(
         f'[magenta]Disk Quota:[/magenta] [green]{get_account_info("pretty_disk_quota")}[/green]'
     )
@@ -47,6 +49,7 @@ def diskquota() -> None:
 
 @app.command()
 def bandwidthquota() -> None:
+    """Bandwidth usage quota"""
     console.print(
         f'[magenta]Bandwidth Quota:[/magenta] [green]{get_account_info("pretty_bw_quota")}[/green]'
     )
@@ -54,6 +57,7 @@ def bandwidthquota() -> None:
 
 @app.command()
 def memoryusage() -> None:
+    """Memory usage"""
     console.print(
         f'[magenta]Memory Usage:[/magenta] [green]{round(get_account_info("memory_usage") / 1024, 2)} MB [/green]'
     )
@@ -61,6 +65,7 @@ def memoryusage() -> None:
 
 @app.command()
 def summary() -> None:
+    """Summary of server"""
     response = requests.get(BASE_URL).json()[0]
     table = Table(
         show_header=False,
