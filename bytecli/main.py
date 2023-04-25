@@ -33,7 +33,7 @@ def get_account_info(attribute: str):
 
 @app.command()
 def servername() -> None:
-    """Name of serverd"""
+    """Name of server"""
     console.print(
         f'[magenta]Server name:[/magenta] [green]{get_account_info("server_name")}[/green]'
     )
@@ -67,21 +67,62 @@ def memoryusage() -> None:
 def summary() -> None:
     """Summary of server"""
     response = requests.get(BASE_URL).json()[0]
-    table = Table(
+    server_table = Table(
         show_header=False,
         show_lines=False,
         title=f"Server Summary - [purple]{response['server_name']}[/purple]",
     )
-    table.add_row(
+    server_table.add_row(
         f"[magenta]Disk Quota[/magenta]",
         f"[green]{response['pretty_disk_quota']}[/green]",
     )
-    table.add_row(
+    server_table.add_row(
         f"[magenta]Bandwidth Quota[/magenta]",
         f"[green]{response['pretty_bw_quota']}[/green]",
     )
-    table.add_row(
+    server_table.add_row(
         f"[magenta]Memory Usage[/magenta]",
         f"[green]{round(response['memory_usage'] / 1024, 2)} MB[/green]",
     )
-    console.print(table)
+
+    account_table = Table(
+        show_header=False,
+        show_lines=False,
+        title=f"Account Summary - [purple]{response['server_name']}[/purple]",
+    )
+    account_table.add_row(
+        f"[magenta]Type[/magenta]",
+        f"[green]{response['type']}[/green]",
+    )
+    account_table.add_row(
+        f"[magenta]Plan name[/magenta]",
+        f"[green]{response['plan_name']}[/green]",
+    )
+    account_table.add_row(
+        f"[magenta]Account IP[/magenta]",
+        f"[green]{response['account_ip']}[/green]",
+    )
+
+    console.print(account_table)
+    console.print(server_table)
+
+
+@app.command()
+def apps() -> None:
+    """Installed Applications"""
+    response = requests.get(BASE_URL).json()[0]
+    user_apps = response["user_apps"]
+    app_table = Table(
+        show_header=True,
+        show_lines=False,
+        title=f"Installed Applications - [purple]{response['server_name']}[/purple]",
+    )
+    app_table.add_column("Name", style="dim", width=10, justify="left")
+    app_table.add_column("URL", min_width=20, justify="left")
+    for user_app in user_apps:
+        if user_app["installed"]:
+            app_table.add_row(
+                f'[green]{user_app["app_name"]}[/green]',
+                f'[green]{user_app["webui_url"]}[/green]',
+            )
+    console.print(app_table)
